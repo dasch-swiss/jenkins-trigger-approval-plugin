@@ -16,7 +16,7 @@ public class RegexUtil {
 	public static String getDefaultRegexFromTaskURL(String url) {
 		Matcher matcher = JOB_URL_PATTERN.matcher(url);
 		if (matcher.find() && matcher.groupCount() == 1) {
-			url = matcher.group(0);
+			url = matcher.group(1);
 		}
 		return String.format("(^|/)%s$", RegexUtil.escape(url));
 	}
