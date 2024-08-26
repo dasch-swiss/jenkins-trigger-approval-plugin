@@ -45,12 +45,25 @@ function installNotificationService(factory, notifications) {
   }
   
   const buildUrlRegex = new RegExp("(^|/)job/[^/]+/build(\\?[^/]+)?$");
-  const open = window.XMLHttpRequest.prototype.open;
-  window.XMLHttpRequest.prototype.open = function(method, url, ...args) {
+  
+  function checkUrlAndPoll(url) {
     if(buildUrlRegex.test(url)) {
       setPollOnRefresh();
       startPolling();
     }
-    return open.call(this, method, url, ...args);
+  }
+  
+  const origOpen = window.XMLHttpRequest.prototype.open;
+  window.XMLHttpRequest.prototype.open = function(...args) {
+    const [ method, url ] = args;
+    checkUrlAndPoll(url);
+    return origOpen.call(this, ...args);
+  };
+  
+  const origFetch = window.fetch;
+  window.fetch = function(...args) {
+    const [ url ] = args;
+    checkUrlAndPoll(url);
+    return origFetch.call(this, ...args);
   };
 }
