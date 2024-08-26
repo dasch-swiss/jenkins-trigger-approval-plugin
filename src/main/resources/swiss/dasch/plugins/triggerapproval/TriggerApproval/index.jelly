@@ -1,0 +1,322 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:f="/lib/form">
+  <l:layout title="${%Title}" permission="${app.CONFIGURE}">
+    <j:set var="descriptor" value="${it.descriptor}" />
+    <st:include page="sidepanel.jelly" it="${app}"/>
+    <l:main-panel>
+      <f:section title="${%AllowDenyCause}">
+        <f:form action="submitCustomCause" method="post">
+          <f:entry title="${%CauseClassName}" field="causeClassName">
+            <f:textbox/>
+          </f:entry>
+          <f:optionalBlock name="hasSelectedMaxCount" title="${%ForSpecificNumberOfTimes}" inline="true">
+            <f:entry title="${%HowManyTimes}" field="selectedMaxCount">
+              <f:number min="1" default="1"/>
+            </f:entry>
+          </f:optionalBlock>
+          <f:optionalBlock name="hasSelectedTaskUrlRegex" title="${%ForSpecificJob}" inline="true">
+            <f:entry title="${%WhichJob}" field="selectedTaskUrlRegex">
+              <f:select/>
+            </f:entry>
+          </f:optionalBlock>
+          <br/>
+          <div class="jenkins-buttons-row jenkins-buttons-row--equal-width">
+            <f:entry>
+              <f:submit name="approve" value="${%Approve}"/>
+            </f:entry>
+            <f:entry>
+              <f:submit name="deny" value="${%Deny}"/>
+            </f:entry>
+          </div>
+        </f:form>
+      </f:section>
+      <f:section title="${%PendingCauses}">
+        <table class="sortable pane bigtable" style="width:75%; border-collapse: collapse;" border="1">
+          <tr>
+            <th>${%TableHeaderDate}</th>
+            <th>${%TableHeaderCause}</th>
+            <th>${%TableHeaderDescription}</th>
+            <th>${%TableHeaderHash}</th>
+            <th>${%TableHeaderTask}</th>
+            <th></th>
+          </tr>
+          <j:forEach var="causeEntry" items="${it.pendingCauseEntries}">
+            <tr>
+              <td>
+                <j:if test="${causeEntry.date != null}">
+                  ${causeEntry.date}
+                </j:if>
+              </td>
+              <td>${causeEntry.causeClassName}</td>
+              <td>${causeEntry.causeDescription}</td>
+              <td>${causeEntry.causeHash}</td>
+              <td>${causeEntry.taskUrlRegex}</td>
+              <td>
+                <f:form action="submitExistingCause" method="post">
+                  <input type="hidden" name="causeClassName" value="${causeEntry.causeClassName}"/>
+                  <input type="hidden" name="exact" value="${causeEntry.exact}"/>
+                  <input type="hidden" name="taskUrlRegex" value="${causeEntry.taskUrlRegex}"/>
+                  <input type="hidden" name="count" value="${causeEntry.count}"/>
+                  <input type="hidden" name="hash" value="${causeEntry.hash}"/>
+                  <f:optionalBlock name="hasSelectedMaxCount" title="${%ForSpecificNumberOfTimes}" inline="true">
+                    <f:entry title="${%HowManyTimes}" field="selectedMaxCount">
+                      <f:number min="1" default="${causeEntry.count > 1 ? causeEntry.count : 1}"/>
+                    </f:entry>
+                  </f:optionalBlock>
+                  <f:optionalBlock name="hasSelectedTaskUrlRegex" title="${%ForSpecificJob}" inline="true">
+                    <input type="hidden" name="selectedTaskUrlRegex" value="${causeEntry.taskUrlRegex}"/>
+                    ${%SpecificJob}${causeEntry.taskUrlRegex}
+                    <br/>
+                  </f:optionalBlock>
+                  <f:optionalBlock name="hasSelectedExactCause" title="${%ForSpecificCause}" inline="true">
+                    <input type="hidden" name="selectedExactCause" value="${causeEntry.exact}"/>
+                    ${%ExactDescription}${causeEntry.causeDescription}
+                    <br/>
+                    ${%ExactHash}${causeEntry.causeHash}
+                    <br/>
+                  </f:optionalBlock>
+                  <div class="jenkins-buttons-row jenkins-buttons-row--equal-width">
+                    <f:entry>
+                      <f:submit name="approve" value="${%Approve}"/>
+                    </f:entry>
+                    <f:entry>
+                      <f:submit name="deny" value="${%Deny}"/>
+                    </f:entry>
+                    <f:entry>
+                      <f:submit name="ignore" value="${%Ignore}"/>
+                    </f:entry>
+                    <f:entry>
+                      <f:submit name="remove" value="${%Remove}"/>
+                    </f:entry>
+                  </div>
+                </f:form>
+              </td>
+            </tr>
+          </j:forEach>
+        </table>
+        <br/>
+        <div>
+          <f:form action="clearPendingCauses" method="post">
+            <f:submit name="clear" value="${%Clear}"/>
+          </f:form>
+        </div>
+      </f:section>
+      <f:section title="${%IgnoredCauses}">
+        <table class="sortable pane bigtable" style="width:75%; border-collapse: collapse;" border="1">
+          <tr>
+            <th>${%TableHeaderCause}</th>
+            <th>${%TableHeaderExact}</th>
+            <th>${%TableHeaderTask}</th>
+            <th>${%TableHeaderCount}</th>
+            <th></th>
+          </tr>
+          <j:forEach var="causeEntry" items="${it.ignoredCauseEntries}">
+            <tr>
+              <td>${causeEntry.causeClassName}</td>
+              <td>
+                <j:if test="${causeEntry.exact}">
+                  ${%ExactYes}
+                  <br/>
+                  ${%ExactDescription}${causeEntry.causeDescription}
+                  <br/>
+                  ${%ExactHash}${causeEntry.causeHash}
+                </j:if>
+                <j:if test="${!causeEntry.exact}">
+                  ${%ExactNo}
+                </j:if>
+              </td>
+              <td>
+                <j:if test="${causeEntry.taskUrlRegex != null}">
+                  ${causeEntry.taskUrlRegex}
+                  <j:if test="${causeEntry.taskUrlPatternInvalid}">
+                    <span style="color:red"><b>(<em>invalid</em>)</b></span>
+                  </j:if>
+                </j:if>
+                <j:if test="${causeEntry.taskUrlRegex == null}">
+                  ${%TaskAny}
+                </j:if>
+              </td>
+              <td>
+                <j:if test="${!causeEntry.indefinite}">
+                  ${causeEntry.count}
+                </j:if>
+                <j:if test="${causeEntry.indefinite}">
+                  ${%CountIndefinite}
+                </j:if>
+              </td>
+              <td>
+                <f:form action="submitIgnoredCause" method="post">
+                  <input type="hidden" name="causeClassName" value="${causeEntry.causeClassName}"/>
+                  <input type="hidden" name="exact" value="${causeEntry.exact}"/>
+                  <input type="hidden" name="taskUrlRegex" value="${causeEntry.taskUrlRegex}"/>
+                  <input type="hidden" name="count" value="${causeEntry.count}"/>
+                  <input type="hidden" name="hash" value="${causeEntry.hash}"/>
+                  <f:optionalBlock name="hasSelectedMaxCount" title="${%ForSpecificNumberOfTimes}" inline="true">
+                    <f:entry title="${%HowManyTimes}" field="selectedMaxCount">
+                      <f:number min="1" default="${causeEntry.count > 1 ? causeEntry.count : 1}"/>
+                    </f:entry>
+                  </f:optionalBlock>
+                  <j:if test="${causeEntry.taskUrlRegex != null}">
+                    <f:optionalBlock name="hasSelectedTaskUrlRegex" title="${%ForSpecificJob}" inline="true">
+                      <input type="hidden" name="selectedTaskUrlRegex" value="${causeEntry.taskUrlRegex}"/>
+                      ${%SpecificJob}${causeEntry.taskUrlRegex}
+                      <br/>
+                    </f:optionalBlock>
+                  </j:if>
+                  <j:if test="${causeEntry.taskUrlRegex == null}">
+                    <f:optionalBlock name="hasSelectedTaskUrlRegex" title="${%ForSpecificJob}" inline="true">
+                      <f:entry title="${%WhichJob}" field="selectedTaskUrlRegex">
+                        <f:select/>
+                      </f:entry>
+                    </f:optionalBlock>
+                  </j:if>
+                  <j:if test="${causeEntry.exact}">
+                    <f:optionalBlock name="hasSelectedExactCause" title="${%ForSpecificCause}" inline="true">
+                      <input type="hidden" name="selectedExactCause" value="${causeEntry.exact}"/>
+                      ${%ExactDescription}${causeEntry.causeDescription}
+                      <br/>
+                      ${%ExactHash}${causeEntry.causeHash}
+                      <br/>
+                    </f:optionalBlock>
+                  </j:if>
+                  <div class="jenkins-buttons-row jenkins-buttons-row--equal-width">
+                    <f:entry>
+                      <f:submit name="approve" value="${%Approve}"/>
+                    </f:entry>
+                    <f:entry>
+                      <f:submit name="deny" value="${%Deny}"/>
+                    </f:entry>
+                    <f:entry>
+                      <f:submit name="ignore" value="${%Ignore}"/>
+                    </f:entry>
+                    <f:entry>
+                      <f:submit name="remove" value="${%Remove}"/>
+                    </f:entry>
+                  </div>
+                </f:form>
+              </td>
+            </tr>
+          </j:forEach>
+        </table>
+      </f:section>
+      <f:section title="${%ApprovedCauses}">
+        <table class="sortable pane bigtable" style="width:75%; border-collapse: collapse;" border="1">
+          <tr>
+            <th>${%TableHeaderCause}</th>
+            <th>${%TableHeaderExact}</th>
+            <th>${%TableHeaderTask}</th>
+            <th>${%TableHeaderCount}</th>
+            <th></th>
+          </tr>
+          <j:forEach var="causeEntry" items="${it.approvedCauseEntries}">
+            <tr>
+              <td>${causeEntry.causeClassName}</td>
+              <td>
+                <j:if test="${causeEntry.exact}">
+                  ${%ExactYes}
+                  <br/>
+                  ${%ExactDescription}${causeEntry.causeDescription}
+                  <br/>
+                  ${%ExactHash}${causeEntry.causeHash}
+                </j:if>
+                <j:if test="${!causeEntry.exact}">
+                  ${%ExactNo}
+                </j:if>
+              </td>
+              <td>
+                <j:if test="${causeEntry.taskUrlRegex != null}">
+                  ${causeEntry.taskUrlRegex}
+                  <j:if test="${causeEntry.taskUrlPatternInvalid}">
+                    <span style="color:red"><b>(<em>invalid</em>)</b></span>
+                  </j:if>
+                </j:if>
+                <j:if test="${causeEntry.taskUrlRegex == null}">
+                  ${%TaskAny}
+                </j:if>
+              </td>
+              <td>
+                <j:if test="${!causeEntry.indefinite}">
+                  ${causeEntry.count}
+                </j:if>
+                <j:if test="${causeEntry.indefinite}">
+                  ${%CountIndefinite}
+                </j:if>
+              </td>
+              <td>
+                <f:form action="removeApprovedCause" method="post">
+                  <f:entry>
+                    <input type="hidden" name="causeClassName" value="${causeEntry.causeClassName}"/>
+                    <input type="hidden" name="exact" value="${causeEntry.exact}"/>
+                    <input type="hidden" name="taskUrlRegex" value="${causeEntry.taskUrlRegex}"/>
+                    <input type="hidden" name="count" value="${causeEntry.count}"/>
+                    <input type="hidden" name="hash" value="${causeEntry.hash}"/>
+                    <f:submit value="${%Remove}"/>
+                  </f:entry>
+                </f:form>
+              </td>
+            </tr>
+          </j:forEach>
+        </table>
+      </f:section>
+      <f:section title="${%DeniedCauses}">
+        <table class="sortable pane bigtable" style="width:75%; border-collapse: collapse;" border="1">
+          <tr>
+            <th>${%TableHeaderCause}</th>
+            <th>${%TableHeaderExact}</th>
+            <th>${%TableHeaderTask}</th>
+            <th>${%TableHeaderCount}</th>
+            <th></th>
+          </tr>
+          <j:forEach var="causeEntry" items="${it.deniedCauseEntries}">
+            <tr>
+              <td>${causeEntry.causeClassName}</td>
+              <td>
+                <j:if test="${causeEntry.exact}">
+                  ${%ExactYes}
+                  <br/>
+                  ${%ExactDescription}${causeEntry.causeDescription}
+                  <br/>
+                  ${%ExactHash}${causeEntry.causeHash}
+                </j:if>
+                <j:if test="${!causeEntry.exact}">
+                  ${%ExactNo}
+                </j:if>
+              </td>
+              <td>
+                <j:if test="${causeEntry.taskUrlRegex != null}">
+                  ${causeEntry.taskUrlRegex}
+                  <j:if test="${causeEntry.taskUrlPatternInvalid}">
+                    <span style="color:red"><b>(<em>invalid</em>)</b></span>
+                  </j:if>
+                </j:if>
+                <j:if test="${causeEntry.taskUrlRegex == null}">
+                  ${%TaskAny}
+                </j:if>
+              </td>
+              <td>
+                <j:if test="${!causeEntry.indefinite}">
+                  ${causeEntry.count}
+                </j:if>
+                <j:if test="${causeEntry.indefinite}">
+                  ${%CountIndefinite}
+                </j:if>
+              </td>
+              <td>
+                <f:form action="removeDeniedCause" method="post">
+                  <f:entry>
+                    <input type="hidden" name="causeClassName" value="${causeEntry.causeClassName}"/>
+                    <input type="hidden" name="exact" value="${causeEntry.exact}"/>
+                    <input type="hidden" name="taskUrlRegex" value="${causeEntry.taskUrlRegex}"/>
+                    <input type="hidden" name="count" value="${causeEntry.count}"/>
+                    <input type="hidden" name="hash" value="${causeEntry.hash}"/>
+                    <f:submit value="${%Remove}"/>
+                  </f:entry>
+                </f:form>
+              </td>
+            </tr>
+          </j:forEach>
+        </table>
+      </f:section>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

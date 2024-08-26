@@ -1,0 +1,25 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <j:if test="${it.enabled}">
+    <j:new var="notificationServiceFactory" className="swiss.dasch.plugins.triggerapproval.NotificationServiceFactory" classLoader="${it.class.classLoader}"/>
+    <st:bind var="dasch_swiss_plugins_triggerapproval_notification_service_factory" value="${notificationServiceFactory}"/>
+    <st:adjunct includes="swiss.dasch.plugins.triggerapproval.NotificationPageDecorator.notifications"/>
+    <script>
+      installNotificationService(
+        dasch_swiss_plugins_triggerapproval_notification_service_factory,
+        {
+          "not_approved":
+          {
+            "message": "${%JobNotApproved}",
+            "settings": window.notificationBar.WARNING
+          },
+          "denied":
+          {
+            "message": "${%JobDenied}",
+            "settings": window.notificationBar.WARNING
+          }
+        }
+      );
+    </script>
+  </j:if>
+</j:jelly>
