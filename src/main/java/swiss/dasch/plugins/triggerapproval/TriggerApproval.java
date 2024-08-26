@@ -302,7 +302,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 			outer: for (Cause cause : causes) {
 				if (!matchedCauses.contains(cause)) {
 					CauseEntry entry = CauseEntry.indefinite(cause, true,
-							String.format("^%s", RegexUtil.escape(task.getUrl())));
+							RegexUtil.getDefaultRegexFromTaskURL(task.getUrl()));
 
 					if (this.ignoredCauses.contains(entry)) {
 						continue outer;
@@ -413,7 +413,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 			TopLevelItem item = Jenkins.get().getItem(jobName);
 
 			if (item != null && item.hasPermission(Item.DISCOVER)) {
-				list.add(item.getFullDisplayName(), String.format("^%s", RegexUtil.escape(item.getUrl())));
+				list.add(item.getFullDisplayName(), RegexUtil.getDefaultRegexFromTaskURL(item.getUrl()));
 			}
 		}
 
