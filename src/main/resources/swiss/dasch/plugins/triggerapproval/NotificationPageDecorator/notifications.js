@@ -66,4 +66,9 @@ function installNotificationService(factory, notifications) {
     checkUrlAndPoll(url);
     return origFetch.call(this, ...args);
   };
+  
+  document.body.addEventListener("submit", function(e) {
+    const url = e.submitter.form.action;
+    checkUrlAndPoll(url);
+  });
 }
