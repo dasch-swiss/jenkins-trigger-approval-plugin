@@ -5,21 +5,23 @@
     <st:bind var="dasch_swiss_plugins_triggerapproval_notification_service_factory" value="${notificationServiceFactory}"/>
     <st:adjunct includes="swiss.dasch.plugins.triggerapproval.NotificationPageDecorator.notifications"/>
     <script>
-      installNotificationService(
-        dasch_swiss_plugins_triggerapproval_notification_service_factory,
-        {
-          "not_approved":
+      document.addEventListener("DOMContentLoaded", function() {
+        installNotificationService(
+          dasch_swiss_plugins_triggerapproval_notification_service_factory,
           {
-            "message": "${%JobNotApproved}",
-            "settings": window.notificationBar.WARNING
-          },
-          "denied":
-          {
-            "message": "${%JobDenied}",
-            "settings": window.notificationBar.WARNING
+            "not_approved":
+            {
+              "message": "${%JobNotApproved}",
+              "settings": window.notificationBar.WARNING
+            },
+            "denied":
+            {
+              "message": "${%JobDenied}",
+              "settings": window.notificationBar.WARNING
+            }
           }
-        }
-      );
+        );
+      });
     </script>
   </j:if>
 </j:jelly>

@@ -40,10 +40,8 @@ function installNotificationService(factory, notifications) {
   }
   
   if(shouldPollOnRefresh()) {
-    document.addEventListener("DOMContentLoaded", function() {
-      clearPollOnRefresh();
-      startPolling();
-    });
+    clearPollOnRefresh();
+    startPolling();
   }
   
   const buildUrlRegex = new RegExp("(^|/)job/[^/]+/build(\\?[^/]+)?$");
