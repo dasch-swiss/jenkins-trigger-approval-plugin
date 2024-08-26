@@ -17,7 +17,7 @@
     <packaging>hpi</packaging>
 
     <properties>
-        <revision>1.0</revision>
+        <revision>1.2</revision>
 
         <jenkins.version>2.332.4</jenkins.version>
 
