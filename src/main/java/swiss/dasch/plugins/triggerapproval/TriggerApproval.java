@@ -394,7 +394,10 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 
 	@Override
 	public String getIconFileName() {
-		return null;
+		if (!TriggerApproval.get().getEnabled() || !Jenkins.get().hasPermission(Permission.CONFIGURE)) {
+			return null;
+		}
+		return "notepad.svg";
 	}
 
 	@Override

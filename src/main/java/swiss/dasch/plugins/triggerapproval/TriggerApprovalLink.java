@@ -3,6 +3,7 @@ package swiss.dasch.plugins.triggerapproval;
 import hudson.Extension;
 import hudson.model.ManagementLink;
 import hudson.security.Permission;
+import jenkins.model.Jenkins;
 
 @Extension
 public class TriggerApprovalLink extends ManagementLink {
@@ -14,7 +15,7 @@ public class TriggerApprovalLink extends ManagementLink {
 
 	@Override
 	public String getIconFileName() {
-		if (!TriggerApproval.get().getEnabled()) {
+		if (!TriggerApproval.get().getEnabled() || !Jenkins.get().hasPermission(Permission.CONFIGURE)) {
 			return null;
 		}
 		return "notepad.svg";
@@ -22,6 +23,9 @@ public class TriggerApprovalLink extends ManagementLink {
 
 	@Override
 	public String getUrlName() {
+		if (!TriggerApproval.get().getEnabled() || !Jenkins.get().hasPermission(Permission.CONFIGURE)) {
+			return null;
+		}
 		return TriggerApproval.get().getUrlName();
 	}
 
