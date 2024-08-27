@@ -46,12 +46,20 @@ public class CauseEntry implements Serializable {
 		return new CauseEntry(causeClassName, null, taskUrlRegex, count);
 	}
 
+	public static CauseEntry limited(Class<?> causeClass, @Nullable String taskUrlRegex, int count) {
+		return limited(causeClass.getName(), taskUrlRegex, count);
+	}
+
 	public static CauseEntry indefinite(Cause cause, boolean exact, @Nullable String taskUrlRegex) {
 		return new CauseEntry(cause.getClass().getName(), exact ? cause : null, taskUrlRegex, 0);
 	}
 
 	public static CauseEntry indefinite(String causeClassName, @Nullable String taskUrlRegex) {
 		return new CauseEntry(causeClassName, null, taskUrlRegex, 0);
+	}
+
+	public static CauseEntry indefinite(Class<?> causeClass, @Nullable String taskUrlRegex) {
+		return indefinite(causeClass.getName(), taskUrlRegex);
 	}
 
 	public String getCauseClassName() {

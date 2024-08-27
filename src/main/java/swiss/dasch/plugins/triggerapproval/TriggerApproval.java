@@ -143,7 +143,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 		return false;
 	}
 
-	public synchronized void clearApprovedCauseEntries(CauseEntry entry) {
+	public synchronized void clearApprovedCauseEntries() {
 		this.approvedCauses.clear();
 		this.save();
 	}
@@ -240,6 +240,11 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 			return true;
 		}
 		return false;
+	}
+
+	public synchronized void clearIgnoredCauseEntries() {
+		this.ignoredCauses.clear();
+		this.save();
 	}
 
 	public synchronized List<CauseEntry> getIgnoredCauseEntries() {
