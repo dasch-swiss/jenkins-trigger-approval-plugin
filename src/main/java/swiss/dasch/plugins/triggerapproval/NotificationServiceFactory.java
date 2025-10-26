@@ -33,7 +33,7 @@ public class NotificationServiceFactory {
 
 		this.removeService();
 
-		Ancestor ancestor = Stapler.getCurrentRequest().findAncestor(BoundObjectTable.class);
+		Ancestor ancestor = Stapler.getCurrentRequest2().findAncestor(BoundObjectTable.class);
 		if (ancestor == null) {
 			throw new IllegalStateException("No BoundObjectTable ancestor");
 		}

@@ -15,12 +15,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.verb.POST;
 
 import hudson.BulkChange;
@@ -34,6 +32,7 @@ import hudson.model.TopLevelItem;
 import hudson.model.Queue.Task;
 import hudson.security.Permission;
 import hudson.util.ListBoxModel;
+import jakarta.servlet.ServletException;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
@@ -116,7 +115,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 	}
 
 	@Override
-	public boolean configure(StaplerRequest req, JSONObject json) {
+	public boolean configure(StaplerRequest2 req, JSONObject json) {
 		this.resetProperties();
 
 		try (BulkChange bc = new BulkChange(this)) {
@@ -428,7 +427,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 		return list;
 	}
 
-	private static CustomCauseSubmission parseCustomCauseSubmission(StaplerRequest req) throws ServletException {
+	private static CustomCauseSubmission parseCustomCauseSubmission(StaplerRequest2 req) throws ServletException {
 		JSONObject json = req.getSubmittedForm();
 
 		CustomCauseSubmission submission = req.bindJSON(CustomCauseSubmission.class, json);
@@ -451,7 +450,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 	}
 
 	@POST
-	public synchronized void doSubmitCustomCause(StaplerRequest req, StaplerResponse resp)
+	public synchronized void doSubmitCustomCause(StaplerRequest2 req, StaplerResponse2 resp)
 			throws IOException, ServletException {
 		Jenkins.get().checkPermission(Permission.CONFIGURE);
 
@@ -469,7 +468,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 	}
 
 	@POST
-	public void doRemoveApprovedCause(StaplerRequest req, StaplerResponse resp) throws IOException, ServletException {
+	public void doRemoveApprovedCause(StaplerRequest2 req, StaplerResponse2 resp) throws IOException, ServletException {
 		Jenkins.get().checkPermission(Permission.CONFIGURE);
 
 		JSONObject json = req.getSubmittedForm();
@@ -489,7 +488,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 	}
 
 	@POST
-	public void doRemoveDeniedCause(StaplerRequest req, StaplerResponse resp) throws IOException, ServletException {
+	public void doRemoveDeniedCause(StaplerRequest2 req, StaplerResponse2 resp) throws IOException, ServletException {
 		Jenkins.get().checkPermission(Permission.CONFIGURE);
 
 		JSONObject json = req.getSubmittedForm();
@@ -509,7 +508,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 	}
 
 	@POST
-	public void doSubmitExistingCause(StaplerRequest req, StaplerResponse resp) throws IOException, ServletException {
+	public void doSubmitExistingCause(StaplerRequest2 req, StaplerResponse2 resp) throws IOException, ServletException {
 		Jenkins.get().checkPermission(Permission.CONFIGURE);
 
 		JSONObject json = req.getSubmittedForm();
@@ -548,7 +547,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 	}
 
 	@POST
-	public void doSubmitIgnoredCause(StaplerRequest req, StaplerResponse resp) throws IOException, ServletException {
+	public void doSubmitIgnoredCause(StaplerRequest2 req, StaplerResponse2 resp) throws IOException, ServletException {
 		Jenkins.get().checkPermission(Permission.CONFIGURE);
 
 		JSONObject json = req.getSubmittedForm();
@@ -587,7 +586,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 	}
 
 	@POST
-	public void doClearPendingCauses(StaplerRequest req, StaplerResponse resp) throws IOException, ServletException {
+	public void doClearPendingCauses(StaplerRequest2 req, StaplerResponse2 resp) throws IOException, ServletException {
 		Jenkins.get().checkPermission(Permission.CONFIGURE);
 
 		this.clearPendingCauseEntries();
