@@ -41,7 +41,7 @@ function installNotificationService(factory, notifications) {
   
   if(shouldPollOnRefresh()) {
     clearPollOnRefresh();
-    startPolling();
+    setTimeout(startPolling, 500);
   }
   
   const buildUrlRegex = new RegExp("(^|/)job/[^/]+/build(\\?[^/]+)?$");
@@ -49,7 +49,7 @@ function installNotificationService(factory, notifications) {
   function checkUrlAndPoll(url) {
     if(buildUrlRegex.test(url)) {
       setPollOnRefresh();
-      startPolling();
+      setTimeout(startPolling, 500);
     }
   }
   
