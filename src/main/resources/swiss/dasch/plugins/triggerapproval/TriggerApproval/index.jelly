@@ -31,15 +31,16 @@
         </f:form>
       </f:section>
       <f:section title="${%PendingCauses}">
-        <table class="sortable pane bigtable" style="width:75%; border-collapse: collapse;" border="1">
-          <tr>
+        <table class="jenkins-table sortable">
+          <thead>
             <th>${%TableHeaderDate}</th>
             <th>${%TableHeaderCause}</th>
             <th>${%TableHeaderDescription}</th>
             <th>${%TableHeaderHash}</th>
             <th>${%TableHeaderTask}</th>
             <th></th>
-          </tr>
+          </thead>
+          <tbody>
           <j:forEach var="causeEntry" items="${it.pendingCauseEntries}">
             <tr>
               <td>
@@ -58,17 +59,17 @@
                   <input type="hidden" name="taskUrlRegex" value="${causeEntry.taskUrlRegex}"/>
                   <input type="hidden" name="count" value="${causeEntry.count}"/>
                   <input type="hidden" name="hash" value="${causeEntry.hash}"/>
-                  <f:optionalBlock name="hasSelectedMaxCount" title="${%ForSpecificNumberOfTimes}" inline="true">
+                  <f:optionalBlock name="hasSelectedMaxCount" title="${%ForSpecificNumberOfTimes}" inline="true" checked="true">
                     <f:entry title="${%HowManyTimes}" field="selectedMaxCount">
                       <f:number min="1" default="${causeEntry.count > 1 ? causeEntry.count : 1}"/>
                     </f:entry>
                   </f:optionalBlock>
-                  <f:optionalBlock name="hasSelectedTaskUrlRegex" title="${%ForSpecificJob}" inline="true">
+                  <f:optionalBlock name="hasSelectedTaskUrlRegex" title="${%ForThisJob}" inline="true" checked="true">
                     <input type="hidden" name="selectedTaskUrlRegex" value="${causeEntry.taskUrlRegex}"/>
                     ${%SpecificJob}${causeEntry.taskUrlRegex}
                     <br/>
                   </f:optionalBlock>
-                  <f:optionalBlock name="hasSelectedExactCause" title="${%ForSpecificCause}" inline="true">
+                  <f:optionalBlock name="hasSelectedExactCause" title="${%ForSpecificCause}" inline="true" checked="true">
                     <input type="hidden" name="selectedExactCause" value="${causeEntry.exact}"/>
                     ${%ExactDescription}${causeEntry.causeDescription}
                     <br/>
@@ -93,6 +94,7 @@
               </td>
             </tr>
           </j:forEach>
+          </tbody>
         </table>
         <br/>
         <div>
@@ -102,14 +104,15 @@
         </div>
       </f:section>
       <f:section title="${%IgnoredCauses}">
-        <table class="sortable pane bigtable" style="width:75%; border-collapse: collapse;" border="1">
-          <tr>
+        <table class="jenkins-table sortable">
+          <thead>
             <th>${%TableHeaderCause}</th>
             <th>${%TableHeaderExact}</th>
             <th>${%TableHeaderTask}</th>
             <th>${%TableHeaderCount}</th>
             <th></th>
-          </tr>
+          </thead>
+          <tbody>
           <j:forEach var="causeEntry" items="${it.ignoredCauseEntries}">
             <tr>
               <td>${causeEntry.causeClassName}</td>
@@ -151,27 +154,27 @@
                   <input type="hidden" name="taskUrlRegex" value="${causeEntry.taskUrlRegex}"/>
                   <input type="hidden" name="count" value="${causeEntry.count}"/>
                   <input type="hidden" name="hash" value="${causeEntry.hash}"/>
-                  <f:optionalBlock name="hasSelectedMaxCount" title="${%ForSpecificNumberOfTimes}" inline="true">
+                  <f:optionalBlock name="hasSelectedMaxCount" title="${%ForSpecificNumberOfTimes}" inline="true" checked="true">
                     <f:entry title="${%HowManyTimes}" field="selectedMaxCount">
                       <f:number min="1" default="${causeEntry.count > 1 ? causeEntry.count : 1}"/>
                     </f:entry>
                   </f:optionalBlock>
                   <j:if test="${causeEntry.taskUrlRegex != null}">
-                    <f:optionalBlock name="hasSelectedTaskUrlRegex" title="${%ForSpecificJob}" inline="true">
+                    <f:optionalBlock name="hasSelectedTaskUrlRegex" title="${%ForThisJob}" inline="true" checked="true">
                       <input type="hidden" name="selectedTaskUrlRegex" value="${causeEntry.taskUrlRegex}"/>
                       ${%SpecificJob}${causeEntry.taskUrlRegex}
                       <br/>
                     </f:optionalBlock>
                   </j:if>
                   <j:if test="${causeEntry.taskUrlRegex == null}">
-                    <f:optionalBlock name="hasSelectedTaskUrlRegex" title="${%ForSpecificJob}" inline="true">
+                    <f:optionalBlock name="hasSelectedTaskUrlRegex" title="${%ForThisJob}" inline="true" checked="true">
                       <f:entry title="${%WhichJob}" field="selectedTaskUrlRegex">
                         <f:select/>
                       </f:entry>
                     </f:optionalBlock>
                   </j:if>
                   <j:if test="${causeEntry.exact}">
-                    <f:optionalBlock name="hasSelectedExactCause" title="${%ForSpecificCause}" inline="true">
+                    <f:optionalBlock name="hasSelectedExactCause" title="${%ForSpecificCause}" inline="true" checked="true">
                       <input type="hidden" name="selectedExactCause" value="${causeEntry.exact}"/>
                       ${%ExactDescription}${causeEntry.causeDescription}
                       <br/>
@@ -197,17 +200,19 @@
               </td>
             </tr>
           </j:forEach>
+          </tbody>
         </table>
       </f:section>
       <f:section title="${%ApprovedCauses}">
-        <table class="sortable pane bigtable" style="width:75%; border-collapse: collapse;" border="1">
-          <tr>
+        <table class="jenkins-table sortable">
+          <thead>
             <th>${%TableHeaderCause}</th>
             <th>${%TableHeaderExact}</th>
             <th>${%TableHeaderTask}</th>
             <th>${%TableHeaderCount}</th>
             <th></th>
-          </tr>
+          </thead>
+          <tbody>
           <j:forEach var="causeEntry" items="${it.approvedCauseEntries}">
             <tr>
               <td>${causeEntry.causeClassName}</td>
@@ -256,17 +261,19 @@
               </td>
             </tr>
           </j:forEach>
+          </tbody>
         </table>
       </f:section>
       <f:section title="${%DeniedCauses}">
-        <table class="sortable pane bigtable" style="width:75%; border-collapse: collapse;" border="1">
-          <tr>
+        <table class="jenkins-table sortable">
+          <thead>
             <th>${%TableHeaderCause}</th>
             <th>${%TableHeaderExact}</th>
             <th>${%TableHeaderTask}</th>
             <th>${%TableHeaderCount}</th>
             <th></th>
-          </tr>
+          </thead>
+          <tbody>
           <j:forEach var="causeEntry" items="${it.deniedCauseEntries}">
             <tr>
               <td>${causeEntry.causeClassName}</td>
@@ -315,6 +322,7 @@
               </td>
             </tr>
           </j:forEach>
+          </tbody>
         </table>
       </f:section>
     </l:main-panel>
