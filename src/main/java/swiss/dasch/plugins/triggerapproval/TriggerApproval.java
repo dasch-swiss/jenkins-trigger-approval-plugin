@@ -396,7 +396,7 @@ public class TriggerApproval extends GlobalConfiguration implements RootAction {
 		if (!TriggerApproval.get().getEnabled() || !Jenkins.get().hasPermission(Permission.CONFIGURE)) {
 			return null;
 		}
-		return "notepad.svg";
+		return "symbol-shield-warning";
 	}
 
 	@Override

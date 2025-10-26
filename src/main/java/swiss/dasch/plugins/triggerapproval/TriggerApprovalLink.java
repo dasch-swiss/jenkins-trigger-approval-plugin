@@ -14,11 +14,16 @@ public class TriggerApprovalLink extends ManagementLink {
 	}
 
 	@Override
+	public String getDescription() {
+		return Messages.TriggerApprovalLink_Description();
+	}
+
+	@Override
 	public String getIconFileName() {
 		if (!TriggerApproval.get().getEnabled() || !Jenkins.get().hasPermission(Permission.CONFIGURE)) {
 			return null;
 		}
-		return "notepad.svg";
+		return "symbol-shield-warning";
 	}
 
 	@Override
